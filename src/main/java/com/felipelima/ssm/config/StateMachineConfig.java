@@ -37,4 +37,16 @@ public class StateMachineConfig extends StateMachineConfigurerAdapter<PaymentSta
                 .and()
                 .withExternal().source(PaymentState.NEW).target(PaymentState.PRE_AUTH_ERROR).event(PaymentEvent.PRE_AUTH_DECLINED);
     }
+
+    @Override
+    public void configure(StateMachineConfigurationConfigurer<PaymentState, PaymentEvent> config) throws Exception {
+        StateMachineListenerAdapter<PaymentState, PaymentEvent> adapter = new StateMachineListenerAdapter<>(){
+            @Override
+            public void stateChanged(State<PaymentState, PaymentEvent> from, State<PaymentState, PaymentEvent> to) {
+                log.info(String.format("stateChanged(from: %s, to: %s)", from, to));
+            }
+        };
+
+        config.withConfiguration().listener(adapter);
+    }
 }
